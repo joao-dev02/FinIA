@@ -1,0 +1,40 @@
+import { test, expect } from '@playwright/test';
+test('confirma lançamento local e filtra a tabela', async ({ page }) => {
+  const browserErrors: string[] = [];
+  page.on('pageerror', error => browserErrors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error') browserErrors.push(message.text()); });
+  await page.goto('/demo');
+  await expect(page.getByRole('heading', { name: 'Tudo sob controle.' })).toBeVisible();
+  await expect(page.locator('.recharts-surface')).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('dashboard.png'), fullPage: true });
+  await page.getByRole('button', { name: 'Nova movimentação', exact: true }).first().click();
+  await page.getByLabel('Descrição', { exact: true }).fill('Compra de teste');
+  await page.getByLabel('Valor em R$').fill('12,34');
+  await page.getByRole('button', { name: 'Confirmar lançamento simulado' }).click();
+  await page.getByRole('textbox', { name: 'Buscar movimentação' }).fill('Compra de teste');
+  await expect(page.getByRole('cell', { name: 'Compra de teste' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: /12,34/ })).toBeVisible();
+  await expect(page.locator('.stat-card.expense > strong')).toHaveText(/2\.576,54/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(browserErrors).toEqual([]);
+});
+test('cancelar e rejeitar valor inválido não cria lançamento', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.locator('.recharts-surface')).toBeVisible();
+  await page.getByRole('button', { name: 'Nova movimentação', exact: true }).first().click();
+  await page.getByLabel('Descrição', { exact: true }).fill('Não confirmar');
+  await page.getByLabel('Valor em R$').fill('-20');
+  await page.getByRole('button', { name: 'Confirmar lançamento simulado' }).click();
+  await expect(page.getByRole('alert')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('cell', { name: 'Não confirmar' })).toHaveCount(0);
+});
+test('período vazio e resumo claramente simulado', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.locator('.recharts-surface')).toBeVisible();
+  await page.getByLabel('Período', { exact: true }).selectOption('2026-10');
+  await expect(page.getByText('Nenhuma movimentação encontrada.')).toBeVisible();
+  await page.getByRole('button', { name: 'Ver meu resumo' }).click();
+  await expect(page.getByText(/cálculo determinístico/)).toBeVisible();
+});

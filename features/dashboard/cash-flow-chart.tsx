@@ -1,0 +1,6 @@
+'use client';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
+import { formatMoney } from '@/features/finance/domain';
+export default function CashFlowChart({ data, hidden }: { data: { day: string; income: number; expense: number }[]; hidden: boolean }) {
+  return <ResponsiveContainer width="100%" height="100%"><AreaChart data={data}><defs><linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#60a5fa" stopOpacity={.2}/><stop offset="100%" stopColor="#60a5fa" stopOpacity={0}/></linearGradient></defs><CartesianGrid vertical={false} stroke="#272b30" strokeDasharray="4 5"/><XAxis dataKey="day" tickLine={false} axisLine={false} interval={6} tick={{fill:'#81878e',fontSize:11}}/><Tooltip formatter={value => hidden?'Oculto':formatMoney(Math.round(Number(value)*100))} contentStyle={{background:'#1a2024',border:'1px solid #343b40',borderRadius:10,color:'#eee'}}/><Area isAnimationActive={false} type="stepAfter" dataKey="income" name="Receitas" stroke="#60a5fa" strokeWidth={2.5} fill="url(#incomeGradient)"/><Area isAnimationActive={false} type="stepAfter" dataKey="expense" name="Despesas" stroke="#ab9ce6" strokeWidth={2} fill="transparent"/></AreaChart></ResponsiveContainer>;
+}
