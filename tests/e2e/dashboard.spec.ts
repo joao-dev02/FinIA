@@ -14,7 +14,7 @@ test('confirma lançamento local e filtra a tabela', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Buscar movimentação' }).fill('Compra de teste');
   await expect(page.getByRole('cell', { name: 'Compra de teste' })).toBeVisible();
   await expect(page.getByRole('cell', { name: /12,34/ })).toBeVisible();
-  await expect(page.locator('.stat-card.expense > strong')).toHaveText(/2\.576,54/);
+  await expect(page.locator('.stat-card.expense > strong')).toHaveText(/3\.776,54/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(browserErrors).toEqual([]);
 });

@@ -1,6 +1,16 @@
 # FinAI
 
-Sistema de gestão financeira pessoal, com tema azul e integração Supabase em preparação para ativação. A rota `/` usa autenticação e dados persistidos no Supabase configurado; `/demo` permanece isolada com dados fictícios em memória. **Aplique as migrations revisadas e conclua a validação remota antes de usar dados reais.**
+Sistema de gestão financeira pessoal, com tema azul e integração Supabase. A rota `/` usa autenticação e dados persistidos no Supabase configurado; `/demo` permanece isolada com dados fictícios e formulários de prévia. **Aplique as migrations revisadas e conclua a validação remota antes de usar dados reais.**
+
+## Cartões e compromissos — fase 3
+
+Cartões, compras à vista/parceladas, faturas, pagamentos parciais, antecipação, contas a pagar/receber e recorrências mensais/anuais estão implementados. Para atualizar o projeto existente da fase 2, revise e aplique **somente** `supabase/update-phase-3.sql`. Não repita o setup inicial. Enquanto a atualização não for aplicada, contas e movimentações anteriores continuam disponíveis.
+
+Veja [regras e limites da fase 3](docs/phase-3.md). A compra do cartão conta como despesa integral; pagar fatura não duplica gastos. Recorrências criam compromissos pendentes, nunca débitos automáticos. O scheduler opcional tem ativação separada.
+
+## Metas e relatórios — fase 4
+
+Metas, reservas vinculadas às contas, simulação de prazo, relatórios comparativos e exportações CSV/PDF estão implementados localmente. Aplique `supabase/update-phase-4.sql` **após** a fase 3. Reservar não duplica saldo; movimentações que consumiriam uma reserva exigem sua liberação. Veja [regras, arquivos e limites da fase 4](docs/phase-4.md).
 
 ## Conectar seu espaço
 

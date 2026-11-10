@@ -27,9 +27,10 @@ export async function executeFinanceCommand(input: unknown): Promise<CommandResu
       if(message.includes('idempotency_conflict'))return {ok:false,error:'Esta tentativa já foi usada com outros dados. Atualize a página antes de tentar novamente.'};
       if(message.includes('already_reversed'))return {ok:false,error:'Este lançamento já foi estornado. Atualize a página.'};
       if(message.includes('nonzero_balance'))return {ok:false,error:'Transfira o saldo restante antes de arquivar esta conta.'};
+      if(message.includes('funds_reserved'))return {ok:false,error:'Este valor está reservado em metas. Libere a reserva antes de movimentar a conta.'};
       return {ok:false,error:'Não foi possível concluir. Confira os dados e sua permissão no espaço.'};
     }
     committed=true;
-    return {ok:true,snapshot:await readSnapshot()};
+    return {ok:true,snapshot:await readSnapshot(c.operation==='initialize'?undefined:c.workspaceId)};
   } catch { return {ok:false,committed,error:committed?'Operação registrada, mas o painel não foi atualizado. Recarregue a página antes de repetir.':'Conexão indisponível. Tente novamente mantendo os mesmos dados.'}; }
 }
